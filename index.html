@@ -232,7 +232,7 @@
           </div>
           
           <button id="share-btn" class="w-full p-3 rounded-lg btn-accent">Share With Friends</button>
-          <p class="text-sm text-gray-400 mt-4">Earn 200 Coins for every friend who joins using your code!</p>
+          <p class="text-sm text-gray-400 mt-4">Earn 1000 Coins for every friend who joins using your code!</p>
         </div>
       </div>
 
@@ -654,15 +654,15 @@
            const q = query(collection(db, "users"), where("referralCode", "==", refCode));
            const querySnapshot = await getDocs(q);
            if (!querySnapshot.empty) {
-              const referrerDoc = querySnapshot.docs[0];
-              const referrerData = referrerDoc.data();
-              referredByUid = referrerData.uid;
+             const referrerDoc = querySnapshot.docs[0];
+             const referrerData = referrerDoc.data();
+             referredByUid = referrerData.uid;
 
-              // Give 200 coins to referrer
-              const referrerRef = doc(db, "users", referredByUid);
-              await updateDoc(referrerRef, {
-                 balance: (referrerData.balance || 0) + 200
-              });
+             // Give 1000 coins to referrer (UPDATED)
+             const referrerRef = doc(db, "users", referredByUid);
+             await updateDoc(referrerRef, {
+                 balance: (referrerData.balance || 0) + 1000
+             });
            }
         }
         // --- REFERRAL LOGIC END ---
