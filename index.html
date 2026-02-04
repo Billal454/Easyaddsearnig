@@ -196,6 +196,13 @@
         </section>
       </div>
 
+      <div id="notification-page" class="p-4 space-y-4 sub-page">
+        <h2 class="text-xl font-bold text-center">Notifications</h2>
+        <div id="notification-list" class="space-y-3">
+            <p class="text-center text-gray-400 text-sm mt-10">No notifications yet.</p>
+        </div>
+      </div>
+
       <div id="wallet-page" class="p-4 space-y-6 sub-page">
         <h2 class="text-xl font-bold text-center">My Wallet</h2>
         <div class="card-bg p-4 rounded-lg">
@@ -285,7 +292,8 @@
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    // ADDED: onSnapshot for real-time listener
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -431,6 +439,9 @@
         await fetchUserData();
         await fetchAppConfig();
         
+        // Listen for notifications
+        listenForNotifications();
+
         // Check device security
         const deviceValid = await checkDeviceSecurity();
         if (!deviceValid) {
@@ -446,6 +457,76 @@
         showMainPage('auth-section');
       }
     }
+
+    // --- NEW NOTIFICATION LOGIC START ---
+    function listenForNotifications() {
+        const notificationCollection = collection(db, "global_notifications");
+        const q = query(notificationCollection, orderBy("createdAt", "desc"), limit(10));
+
+        // onSnapshot creates a real-time listener
+        onSnapshot(q, (snapshot) => {
+            const listContainer = document.getElementById("notification-list");
+            const dot = document.getElementById("notification-dot");
+            
+            listContainer.innerHTML = "";
+            let latestId = null;
+
+            if (snapshot.empty) {
+                listContainer.innerHTML = '<p class="text-center text-gray-400 text-sm mt-10">No notifications yet.</p>';
+            } else {
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if(!latestId) latestId = doc.id; // Capture newest ID
+
+                    // Format Date
+                    let dateStr = "";
+                    if(data.createdAt) {
+                        dateStr = new Date(data.createdAt.seconds * 1000).toLocaleDateString();
+                    }
+
+                    const html = `
+                    <div class="card-bg p-4 rounded-lg border-l-4 border-accent">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-white">${data.title || "New Message"}</h3>
+                            <span class="text-[10px] text-gray-500">${dateStr}</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mt-1">${data.message}</p>
+                    </div>`;
+                    listContainer.innerHTML += html;
+                });
+
+                // Check if user has seen this latest notification
+                const lastSeenId = localStorage.getItem(`lastSeenNotification_${currentUser.uid}`);
+                if (latestId && latestId !== lastSeenId) {
+                    dot.style.display = "block";
+                }
+            }
+        });
+    }
+
+    // Helper to mark notifications as read when bell is clicked
+    function markNotificationsRead() {
+        const dot = document.getElementById("notification-dot");
+        dot.style.display = "none";
+        
+        // We find the first notification in the list (which is the newest due to sorting)
+        // In a real app we'd query firestore, but here we can check the snapshot implicitly or just save current time
+        // Better approach: Since we don't have the snapshot array in global scope, we will rely on 
+        // saving the ID next time the snapshot updates. For now, simply hiding the dot is enough UX.
+        
+        // To persist the "read" state, we grab the newest notification ID if available
+        // We will do a quick one-time fetch or rely on the listener logic to set the ID eventually.
+        // For this simple implementation:
+        // We will just fetch the latest doc again to get its ID to save to localstorage
+        const q = query(collection(db, "global_notifications"), orderBy("createdAt", "desc"), limit(1));
+        getDocs(q).then(snap => {
+            if(!snap.empty) {
+                const latestId = snap.docs[0].id;
+                localStorage.setItem(`lastSeenNotification_${currentUser.uid}`, latestId);
+            }
+        });
+    }
+    // --- NEW NOTIFICATION LOGIC END ---
 
     async function fetchUserData() {
       const userRef = doc(db, "users", currentUser.uid);
@@ -513,11 +594,16 @@
     function navigateTo(pageId) {
       document.querySelectorAll(".sub-page").forEach(p => p.classList.remove("active"));
       document.getElementById(pageId).classList.add("active");
+      
+      // Update Bottom Nav Active State
       document.querySelectorAll(".nav-link").forEach(link => {
         link.classList.remove("active", "text-accent");
         if (link.dataset.page === pageId) link.classList.add("active", "text-accent");
       });
+      
+      // Specific Page Logic
       if(pageId === 'wallet-page') loadWithdrawalHistory();
+      if(pageId === 'notification-page') markNotificationsRead(); // Handle notification read logic
     }
 
     function startTimerTask(seconds, reward) {
@@ -779,6 +865,11 @@
       document.querySelectorAll('.nav-link').forEach(l => {
         l.onclick = (e) => { e.preventDefault(); navigateTo(l.dataset.page); };
       });
+      // Added click handler for notification bell
+      document.getElementById('notification-bell').onclick = () => {
+         navigateTo('notification-page');
+      };
+      
       document.getElementById('show-signup').onclick = () => {
         document.getElementById('login-view').classList.add('hidden');
         document.getElementById('signup-view').classList.remove('hidden');
