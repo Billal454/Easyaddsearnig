@@ -29,16 +29,41 @@
     .sub-page { display: none; }
     .sub-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
     .bottom-nav a.active { color: #ff8c00; }
+    
+    /* Notification Dot */
     .notification-dot {
-      position: absolute; top: -2px; right: -2px; width: 10px; height: 10px;
+      position: absolute; top: 0; right: 0; width: 10px; height: 10px;
       background-color: #ef4444; border-radius: 50%; border: 2px solid #121212; display: none;
+      animation: pulse 2s infinite;
     }
+
+    /* Toast Notification */
+    #toast-notification {
+        transform: translateY(-150%);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #toast-notification.show {
+        transform: translateY(0);
+    }
+
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+    
     .ip-warning { background-color: #dc2626; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; display: none; }
   </style>
 </head>
 
-<body class="max-w-md mx-auto">
+<body class="max-w-md mx-auto relative overflow-hidden">
+
+  <div id="toast-notification" class="fixed top-4 left-4 right-4 z-[60] bg-gray-800 border-l-4 border-accent p-4 rounded-lg shadow-xl flex items-start space-x-3 cursor-pointer" onclick="navigateTo('notification-page')">
+      <div class="bg-accent p-2 rounded-full text-black">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+      </div>
+      <div>
+          <h4 id="toast-title" class="font-bold text-sm text-white">New Notification</h4>
+          <p id="toast-message" class="text-xs text-gray-300 line-clamp-2">Check your inbox for details.</p>
+      </div>
+  </div>
 
   <div id="loader" class="hidden fixed inset-0 dark-bg bg-opacity-75 flex items-center justify-center z-50">
     <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-accent"></div>
@@ -85,25 +110,28 @@
   </div>
 
   <div id="app-container" class="min-h-screen flex-col main-page">
-    <header class="flex items-center justify-between p-4 sticky top-0 bg-opacity-80 backdrop-blur-md z-10 dark-bg">
-      <h1 class="text-xl font-bold">Earning2</h1>
+    <header class="flex items-center justify-between p-4 sticky top-0 bg-opacity-80 backdrop-blur-md z-10 dark-bg border-b border-gray-800">
+      <h1 class="text-xl font-bold text-accent">Earning2</h1>
       <div class="flex items-center space-x-4">
-        <div id="notification-bell" class="relative cursor-pointer">
-          <i data-lucide="bell" class="w-6 h-6"></i>
+        <div id="notification-bell" class="relative cursor-pointer p-2 hover:bg-gray-800 rounded-full transition">
+          <i data-lucide="bell" class="w-6 h-6 text-gray-300"></i>
           <div id="notification-dot" class="notification-dot"></div>
         </div>
-        <i data-lucide="user" class="w-6 h-6 cursor-pointer" onclick="navigateTo('profile-page')"></i>
+        
+        <div class="p-2 hover:bg-gray-800 rounded-full transition" onclick="navigateTo('profile-page')">
+            <i data-lucide="user" class="w-6 h-6 text-gray-300 cursor-pointer"></i>
+        </div>
       </div>
     </header>
 
     <main class="flex-grow">
       <div id="home-page" class="p-4 space-y-6 sub-page">
-        <div class="card-bg p-4 rounded-lg flex items-center justify-between border-l-4 border-accent">
+        <div class="card-bg p-4 rounded-lg flex items-center justify-between border-l-4 border-accent shadow-lg">
           <div>
             <p class="text-gray-400 text-sm">Your Balance</p>
             <p class="text-3xl font-bold text-white"><span id="coin-balance">0</span> Coins</p>
           </div>
-          <button onclick="navigateTo('wallet-page')" class="bg-white text-black font-semibold px-6 py-2 rounded-lg">Withdraw</button>
+          <button onclick="navigateTo('wallet-page')" class="bg-white text-black font-semibold px-6 py-2 rounded-lg hover:bg-gray-200 transition">Withdraw</button>
         </div>
 
         <section>
@@ -127,7 +155,7 @@
           </div>
 
           <div class="space-y-3">
-            <div class="bg-orange-500 p-3 rounded-lg flex items-center justify-between text-black">
+            <div class="bg-orange-500 p-3 rounded-lg flex items-center justify-between text-black shadow-md transform active:scale-95 transition">
               <div class="flex items-center space-x-3">
                 <span class="text-3xl">🤩</span>
                 <div>
@@ -138,7 +166,7 @@
               <button class="bg-white text-orange-500 font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('interstitial')">Claim</button>
             </div>
 
-            <div class="card-bg p-3 rounded-lg flex items-center justify-between">
+            <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
               <div class="flex items-center space-x-3">
                 <span class="text-3xl">🌐</span>
                 <div>
@@ -149,7 +177,7 @@
               <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost01.blogspot.com', 20)">Visit</button>
             </div>
 
-            <div class="card-bg p-3 rounded-lg flex items-center justify-between">
+            <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
               <div class="flex items-center space-x-3">
                 <span class="text-3xl">🌐</span>
                 <div>
@@ -160,7 +188,7 @@
               <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost2.blogspot.com', 20)">Visit</button>
             </div>
 
-            <div class="card-bg p-3 rounded-lg flex items-center justify-between">
+            <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
               <div class="flex items-center space-x-3">
                 <span class="text-3xl">🌐</span>
                 <div>
@@ -171,7 +199,7 @@
               <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost3.blogspot.com', 20)">Visit</button>
             </div>
 
-            <div class="card-bg p-3 rounded-lg flex items-center justify-between">
+            <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
               <div class="flex items-center space-x-3">
                 <span class="text-3xl">⌛</span>
                 <div>
@@ -182,7 +210,7 @@
               <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://otieu.com/4/10511822', 30)">Start</button>
             </div>
 
-            <div class="card-bg p-3 rounded-lg flex items-center justify-between">
+            <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
               <div class="flex items-center space-x-3">
                 <span class="text-3xl">🎮</span>
                 <div>
@@ -197,29 +225,42 @@
       </div>
 
       <div id="notification-page" class="p-4 space-y-4 sub-page">
-        <h2 class="text-xl font-bold text-center">Notifications</h2>
-        <div id="notification-list" class="space-y-3">
-            <p class="text-center text-gray-400 text-sm mt-10">No notifications yet.</p>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">Inbox</h2>
+            <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-400">Recent Messages</span>
+        </div>
+        <div id="notification-list" class="space-y-3 pb-20">
+            <div class="flex flex-col items-center justify-center mt-20 text-gray-500">
+                <i data-lucide="inbox" class="w-12 h-12 mb-2 opacity-50"></i>
+                <p class="text-sm">No new notifications</p>
+            </div>
         </div>
       </div>
 
       <div id="wallet-page" class="p-4 space-y-6 sub-page">
         <h2 class="text-xl font-bold text-center">My Wallet</h2>
-        <div class="card-bg p-4 rounded-lg">
+        <div class="card-bg p-4 rounded-lg shadow-lg">
           <p class="text-sm text-gray-400 mb-1">Available Balance:</p>
-          <p class="text-3xl font-bold text-accent mb-4"><span id="wallet-coin-balance">0</span> Coins</p>
+          <p class="text-3xl font-bold text-accent mb-2"><span id="wallet-coin-balance">0</span> Coins</p>
           
-          <input id="withdraw-amount" type="number" placeholder="Enter amount" class="w-full p-3 rounded-lg input-field mb-3">
-          <select id="withdraw-method" class="w-full p-3 rounded-lg input-field mb-3">
+          <div class="text-xs bg-gray-800 text-gray-300 p-2 rounded mb-4 flex items-center justify-center gap-2">
+             <i data-lucide="info" class="w-3 h-3 text-accent"></i>
+             <span id="rate-display">Loading Rate...</span>
+          </div>
+          
+          <input id="withdraw-amount" type="number" placeholder="Enter coin amount" class="w-full p-3 rounded-lg input-field mb-2 focus:border-accent focus:outline-none transition">
+          <p class="text-xs text-green-400 text-right mb-3 h-4" id="conversion-preview"></p>
+
+          <select id="withdraw-method" class="w-full p-3 rounded-lg input-field mb-3 focus:border-accent focus:outline-none transition">
             <option value="Bkash">Bkash</option>
             <option value="Nagad">Nagad</option>
             <option value="Rocket">Rocket</option>
           </select>
-          <input id="payment-number" type="number" placeholder="Account Number" class="w-full p-3 rounded-lg input-field mb-3">
-          <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent">Request Withdrawal</button>
+          <input id="payment-number" type="number" placeholder="Account Number" class="w-full p-3 rounded-lg input-field mb-3 focus:border-accent focus:outline-none transition">
+          <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent shadow-md">Request Withdrawal</button>
           
-          <p class="text-xs text-gray-400 mt-4 text-center" id="min-withdrawal-info">
-            Minimum: 5000 Coins | Payment within 12-24 Hours
+          <p class="text-xs text-gray-400 mt-4 text-center">
+            Minimum: <span id="dynamic-min-withdraw">5000</span> Coins | Payment within 12-24 Hours
           </p>
         </div>
 
@@ -231,50 +272,53 @@
 
       <div id="refer-page" class="p-4 space-y-6 sub-page">
         <h2 class="text-xl font-bold text-center">Refer & Earn</h2>
-        <div class="card-bg p-6 rounded-lg text-center">
+        <div class="card-bg p-6 rounded-lg text-center shadow-lg">
           <p class="text-gray-400 mb-2">Your Code</p>
           <div class="bg-gray-800 p-3 rounded-lg flex items-center justify-center mb-4 border border-accent border-dashed">
             <span id="referral-code" class="text-2xl font-bold tracking-widest text-accent">LOADING...</span>
-            <button id="copy-code-btn" class="ml-4"><i data-lucide="copy" class="w-5 h-5 text-gray-400"></i></button>
+            <button id="copy-code-btn" class="ml-4 p-2 hover:bg-gray-700 rounded-full transition"><i data-lucide="copy" class="w-5 h-5 text-gray-400"></i></button>
           </div>
           
-          <button id="share-btn" class="w-full p-3 rounded-lg btn-accent">Share With Friends</button>
-          <p class="text-sm text-gray-400 mt-4">Earn 1000 Coins for every friend who joins using your code!</p>
+          <button id="share-btn" class="w-full p-3 rounded-lg btn-accent shadow-md">Share With Friends</button>
+          <p class="text-sm text-gray-400 mt-4">Earn <span class="text-accent font-bold">1000 Coins</span> for every friend who joins using your code!</p>
         </div>
       </div>
 
       <div id="profile-page" class="p-4 space-y-6 sub-page text-center">
         <div class="flex flex-col items-center">
-          <div class="w-20 h-20 bg-accent rounded-full flex items-center justify-center mb-4">
-             <i data-lucide="user" class="w-10 h-10 text-black"></i>
+          <div class="w-24 h-24 bg-gradient-to-br from-accent to-orange-600 rounded-full flex items-center justify-center mb-4 shadow-lg border-4 border-gray-800">
+             <i data-lucide="user" class="w-12 h-12 text-black"></i>
           </div>
-          <h2 id="profile-name" class="text-xl font-bold">Loading...</h2>
-          <p id="profile-email" class="text-gray-400">...</p>
+          <h2 id="profile-name" class="text-2xl font-bold">Loading...</h2>
+          <p id="profile-email" class="text-gray-400 text-sm">...</p>
         </div>
         
-        <div class="card-bg p-4 rounded-lg">
-          <h3 class="font-semibold mb-3">Device Security</h3>
-          <p class="text-sm text-gray-400 mb-2">Current Device/IP:</p>
-          <p id="current-device-info" class="text-xs font-mono p-2 bg-gray-800 rounded"></p>
-          <p class="text-xs text-gray-400 mt-2">Only one device per account is allowed</p>
+        <div class="card-bg p-4 rounded-lg text-left">
+          <h3 class="font-semibold mb-3 border-b border-gray-700 pb-2">Device Security</h3>
+          <p class="text-sm text-gray-400 mb-1">Current Device/IP:</p>
+          <p id="current-device-info" class="text-xs font-mono p-2 bg-gray-800 rounded text-green-400 break-all"></p>
+          <p class="text-xs text-gray-500 mt-2 flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i> Protected: Single device policy active</p>
         </div>
         
-        <button id="logout-btn" class="w-full mt-4 p-3 rounded-lg bg-red-600 text-white font-bold">Logout</button>
+        <button id="logout-btn" class="w-full mt-4 p-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold transition">Logout</button>
       </div>
     </main>
 
-    <nav class="bottom-nav sticky bottom-0 grid grid-cols-4 items-center text-center py-2 card-bg border-t border-gray-800">
-      <a href="#" class="nav-link active" data-page="home-page"><i data-lucide="home" class="mx-auto w-5 h-5"></i><span class="text-[10px]">Home</span></a>
-      <a href="#" class="nav-link" data-page="wallet-page"><i data-lucide="wallet" class="mx-auto w-5 h-5"></i><span class="text-[10px]">Wallet</span></a>
-      <a href="#" class="nav-link" data-page="refer-page"><i data-lucide="users" class="mx-auto w-5 h-5"></i><span class="text-[10px]">Refer</span></a>
-      <a href="#" class="nav-link" data-page="profile-page"><i data-lucide="user" class="mx-auto w-5 h-5"></i><span class="text-[10px]">Profile</span></a>
+    <nav class="bottom-nav sticky bottom-0 grid grid-cols-4 items-center text-center py-3 card-bg border-t border-gray-800 shadow-lg z-40">
+      <a href="#" class="nav-link active" data-page="home-page"><i data-lucide="home" class="mx-auto w-5 h-5 mb-1"></i><span class="text-[10px]">Home</span></a>
+      <a href="#" class="nav-link" data-page="wallet-page"><i data-lucide="wallet" class="mx-auto w-5 h-5 mb-1"></i><span class="text-[10px]">Wallet</span></a>
+      <a href="#" class="nav-link" data-page="refer-page"><i data-lucide="users" class="mx-auto w-5 h-5 mb-1"></i><span class="text-[10px]">Refer</span></a>
+      <a href="#" class="nav-link" data-page="profile-page"><i data-lucide="user" class="mx-auto w-5 h-5 mb-1"></i><span class="text-[10px]">Profile</span></a>
     </nav>
   </div>
 
   <div id="custom-alert" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[100] p-4">
-    <div class="bg-gray-800 rounded-lg p-6 w-full max-w-xs text-center border border-accent">
-      <p id="alert-message" class="mb-4 font-medium text-sm"></p>
-      <button id="alert-ok-btn" class="btn-accent px-8 py-2 rounded-lg text-sm">OK</button>
+    <div class="bg-gray-800 rounded-lg p-6 w-full max-w-xs text-center border border-accent shadow-2xl">
+      <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i data-lucide="info" class="w-6 h-6 text-accent"></i>
+      </div>
+      <p id="alert-message" class="mb-6 font-medium text-sm text-gray-200"></p>
+      <button id="alert-ok-btn" class="w-full btn-accent py-2 rounded-lg text-sm font-bold">OK</button>
     </div>
   </div>
 
@@ -292,7 +336,6 @@
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-    // ADDED: onSnapshot for real-time listener
     import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
     const app = initializeApp(firebaseConfig);
@@ -301,7 +344,14 @@
 
     let currentUser = null;
     let userData = null;
-    let appConfig = { minWithdrawal: 5000, dailyAdLimit: 15 };
+    // Default config with safe fallback values
+    let appConfig = { 
+        minWithdrawal: 5000, 
+        dailyAdLimit: 15,
+        coinValueCoins: 1000,
+        coinValueTaka: 10,
+        paymentMethods: ['Bkash', 'Nagad', 'Rocket']
+    };
     let userIP = null;
     let deviceId = null;
 
@@ -309,6 +359,7 @@
     const timerModal = document.getElementById('timer-modal');
     const countdownDisplay = document.getElementById('countdown-display');
     const ipWarning = document.getElementById('ip-warning');
+    const toast = document.getElementById('toast-notification');
 
     // Get IP Address
     async function getIPAddress() {
@@ -461,7 +512,9 @@
     // --- NEW NOTIFICATION LOGIC START ---
     function listenForNotifications() {
         const notificationCollection = collection(db, "global_notifications");
-        const q = query(notificationCollection, orderBy("createdAt", "desc"), limit(10));
+        const q = query(notificationCollection, orderBy("createdAt", "desc"), limit(20));
+
+        let isInitialLoad = true;
 
         // onSnapshot creates a real-time listener
         onSnapshot(q, (snapshot) => {
@@ -470,54 +523,79 @@
             
             listContainer.innerHTML = "";
             let latestId = null;
+            let latestDocData = null;
 
             if (snapshot.empty) {
-                listContainer.innerHTML = '<p class="text-center text-gray-400 text-sm mt-10">No notifications yet.</p>';
+                listContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center mt-20 text-gray-500">
+                    <i data-lucide="inbox" class="w-12 h-12 mb-2 opacity-50"></i>
+                    <p class="text-sm">No new notifications</p>
+                </div>`;
             } else {
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    if(!latestId) latestId = doc.id; // Capture newest ID
+                    if(!latestId) {
+                        latestId = doc.id; // Capture newest ID
+                        latestDocData = data;
+                    }
 
                     // Format Date
-                    let dateStr = "";
+                    let dateStr = "Just now";
                     if(data.createdAt) {
-                        dateStr = new Date(data.createdAt.seconds * 1000).toLocaleDateString();
+                        const date = new Date(data.createdAt.seconds * 1000);
+                        dateStr = date.toLocaleDateString("en-US", { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
                     }
 
                     const html = `
-                    <div class="card-bg p-4 rounded-lg border-l-4 border-accent">
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-white">${data.title || "New Message"}</h3>
-                            <span class="text-[10px] text-gray-500">${dateStr}</span>
+                    <div class="card-bg p-4 rounded-lg border-l-4 border-accent shadow-sm hover:bg-[#252525] transition-colors">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-white text-sm">${data.title || "New Message"}</h3>
+                            <span class="text-[10px] text-gray-500 bg-black bg-opacity-30 px-2 py-1 rounded-full">${dateStr}</span>
                         </div>
-                        <p class="text-sm text-gray-300 mt-1">${data.message}</p>
+                        <p class="text-xs text-gray-300 leading-relaxed">${data.message}</p>
                     </div>`;
                     listContainer.innerHTML += html;
                 });
+                
+                // Re-init icons for the new HTML
+                lucide.createIcons();
 
-                // Check if user has seen this latest notification
+                // Logic for Red Dot and Toast
                 const lastSeenId = localStorage.getItem(`lastSeenNotification_${currentUser.uid}`);
+                
                 if (latestId && latestId !== lastSeenId) {
                     dot.style.display = "block";
+                    
+                    const changes = snapshot.docChanges();
+                    const isNewAdd = changes.some(change => change.type === 'added');
+                    
+                    if(!isInitialLoad && isNewAdd) {
+                        showToast(latestDocData.title, latestDocData.message);
+                    }
                 }
             }
+            isInitialLoad = false;
         });
     }
 
-    // Helper to mark notifications as read when bell is clicked
+    function showToast(title, message) {
+        const titleEl = document.getElementById('toast-title');
+        const msgEl = document.getElementById('toast-message');
+        
+        titleEl.textContent = title || "New Notification";
+        msgEl.textContent = message || "Check your inbox.";
+        
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+
     function markNotificationsRead() {
         const dot = document.getElementById("notification-dot");
         dot.style.display = "none";
         
-        // We find the first notification in the list (which is the newest due to sorting)
-        // In a real app we'd query firestore, but here we can check the snapshot implicitly or just save current time
-        // Better approach: Since we don't have the snapshot array in global scope, we will rely on 
-        // saving the ID next time the snapshot updates. For now, simply hiding the dot is enough UX.
-        
-        // To persist the "read" state, we grab the newest notification ID if available
-        // We will do a quick one-time fetch or rely on the listener logic to set the ID eventually.
-        // For this simple implementation:
-        // We will just fetch the latest doc again to get its ID to save to localstorage
         const q = query(collection(db, "global_notifications"), orderBy("createdAt", "desc"), limit(1));
         getDocs(q).then(snap => {
             if(!snap.empty) {
@@ -553,9 +631,20 @@
       }
     }
 
+    // FETCH CONFIG AND UPDATE UI
     async function fetchAppConfig() {
       const snap = await getDoc(doc(db, "config", "main"));
-      if (snap.exists()) appConfig = snap.data();
+      if (snap.exists()) {
+          appConfig = snap.data();
+          // Fallbacks if some fields missing
+          if(!appConfig.minWithdrawal) appConfig.minWithdrawal = 5000;
+          if(!appConfig.dailyAdLimit) appConfig.dailyAdLimit = 15;
+          if(!appConfig.coinValueCoins) appConfig.coinValueCoins = 1000;
+          if(!appConfig.coinValueTaka) appConfig.coinValueTaka = 10;
+          if(!appConfig.paymentMethods) appConfig.paymentMethods = ['Bkash', 'Nagad', 'Rocket'];
+          
+          updateUI();
+      }
     }
 
     function updateUI() {
@@ -566,16 +655,26 @@
       document.getElementById('profile-email').textContent = userData.email;
       document.getElementById('referral-code').textContent = userData.referralCode;
       
+      // Update Dynamic Config Texts in Wallet
+      document.getElementById('dynamic-min-withdraw').textContent = appConfig.minWithdrawal;
+      document.getElementById('rate-display').textContent = `Rate: ${appConfig.coinValueCoins} Coins = ${appConfig.coinValueTaka} ৳`;
+
+      // Update Payment Methods
+      const methodSelect = document.getElementById('withdraw-method');
+      if(appConfig.paymentMethods && appConfig.paymentMethods.length > 0) {
+          methodSelect.innerHTML = appConfig.paymentMethods.map(m => `<option value="${m}">${m}</option>`).join('');
+      }
+      
       // Display device info
       const deviceInfo = document.getElementById('current-device-info');
       if (deviceInfo) {
         deviceInfo.textContent = `${deviceId.substring(0, 12)}... | IP: ${userIP}`;
       }
       
-      // --- UPDATED PROGRESS BAR LOGIC ---
+      // --- UPDATED PROGRESS BAR LOGIC (Uses appConfig.dailyAdLimit) ---
       const today = new Date().toISOString().split('T')[0];
       const count = userData.lastAdWatchDate === today ? (userData.dailyAdCount || 0) : 0;
-      const limit = appConfig.dailyAdLimit || 15;
+      const limit = appConfig.dailyAdLimit;
       
       // Update Texts
       const progressText = document.getElementById('task-progress');
@@ -595,15 +694,13 @@
       document.querySelectorAll(".sub-page").forEach(p => p.classList.remove("active"));
       document.getElementById(pageId).classList.add("active");
       
-      // Update Bottom Nav Active State
       document.querySelectorAll(".nav-link").forEach(link => {
         link.classList.remove("active", "text-accent");
         if (link.dataset.page === pageId) link.classList.add("active", "text-accent");
       });
       
-      // Specific Page Logic
       if(pageId === 'wallet-page') loadWithdrawalHistory();
-      if(pageId === 'notification-page') markNotificationsRead(); // Handle notification read logic
+      if(pageId === 'notification-page') markNotificationsRead();
     }
 
     function startTimerTask(seconds, reward) {
@@ -622,18 +719,17 @@
       }, 1000);
     }
 
-    // Task validation with device check
+    // Task validation with device check and DYNAMIC LIMIT
     async function validateTask() {
-      // Check if user is using registered device
       if (userData.registeredDevice && userData.registeredDevice.deviceId !== deviceId) {
         showAlert("Please use your registered device to complete tasks.");
         return false;
       }
       
-      // Check daily limit
+      // Check daily limit from CONFIG
       const today = new Date().toISOString().split('T')[0];
       const currentCount = userData.lastAdWatchDate === today ? userData.dailyAdCount : 0;
-      if (currentCount >= (appConfig.dailyAdLimit || 15)) {
+      if (currentCount >= appConfig.dailyAdLimit) {
         showAlert("আজকের কাজের লিমিট শেষ!");
         return false;
       }
@@ -644,10 +740,8 @@
     window.visitWebsite = async function(url, seconds) {
       if (!await validateTask()) return;
 
-      // নতুন ট্যাবে ওয়েবসাইট খুলবে
       window.open(url, '_blank');
       
-      // টাইমার স্টার্ট করবে
       timerModal.classList.remove('hidden');
       let timeLeft = seconds;
       countdownDisplay.textContent = timeLeft;
@@ -658,21 +752,18 @@
         if (timeLeft <= 0) {
           clearInterval(interval);
           timerModal.classList.add('hidden');
-          await addReward(50); // 50 কয়েন রিওয়ার্ড
+          await addReward(50); 
         }
       }, 1000);
     }
 
     async function addReward(reward) {
-      // Update active session timestamp
       if (currentUser) {
         try {
           await updateDoc(doc(db, "active_sessions", currentUser.uid), {
             lastActive: serverTimestamp()
           });
-        } catch (e) {
-          console.log("Session update error");
-        }
+        } catch (e) { console.log("Session update error"); }
       }
       
       const today = new Date().toISOString().split('T')[0];
@@ -703,7 +794,6 @@
 
       if (type === 'dailyClick') return startTimerTask(30, 50);
 
-      // Ad Task - Updated to Zone 10514704
       if (typeof window.show_10514704 === 'function') {
         showLoader(true);
         try {
@@ -722,21 +812,17 @@
       const name = document.getElementById('signup-name').value;
       const email = document.getElementById('signup-email').value;
       const pass = document.getElementById('signup-password').value;
-      // Get Referral Code Input
       const refCode = document.getElementById('signup-referral').value.trim();
       
       if (!name || !email || !pass) return showAlert("সবগুলো ঘর পূরণ করুন।");
       
-      // Check if email already exists
       showLoader(true);
       try {
         const res = await createUserWithEmailAndPassword(auth, email, pass);
         await updateProfile(res.user, { displayName: name });
 
-        // --- REFERRAL LOGIC START ---
         let referredByUid = null;
         if(refCode) {
-           // Search for the referrer code
            const q = query(collection(db, "users"), where("referralCode", "==", refCode));
            const querySnapshot = await getDocs(q);
            if (!querySnapshot.empty) {
@@ -744,16 +830,13 @@
              const referrerData = referrerDoc.data();
              referredByUid = referrerData.uid;
 
-             // Give 1000 coins to referrer (UPDATED)
              const referrerRef = doc(db, "users", referredByUid);
              await updateDoc(referrerRef, {
                  balance: (referrerData.balance || 0) + 1000
              });
            }
         }
-        // --- REFERRAL LOGIC END ---
         
-        // Create user with device info
         const userRef = doc(db, "users", res.user.uid);
         const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
         await setDoc(userRef, {
@@ -762,7 +845,7 @@
           email: email,
           balance: 50,
           referralCode: referralCode,
-          referredBy: referredByUid, // Store who referred this user
+          referredBy: referredByUid,
           dailyAdCount: 0,
           lastAdWatchDate: new Date().toISOString().split('T')[0],
           registeredDevice: {
@@ -801,8 +884,8 @@
       showLoader(false);
     }
 
+    // UPDATED WITHDRAWAL HANDLER WITH DYNAMIC MIN WITHDRAWAL
     async function handleWithdrawal() {
-      // Check device validation for withdrawal
       if (userData.registeredDevice && userData.registeredDevice.deviceId !== deviceId) {
         return showAlert("Withdrawal is only allowed from your registered device.");
       }
@@ -811,7 +894,13 @@
       const method = document.getElementById('withdraw-method').value;
       const number = document.getElementById('payment-number').value;
 
-      if (amount < appConfig.minWithdrawal) return showAlert(`সর্বনিম্ন ${appConfig.minWithdrawal} কয়েন লাগবে।`);
+      if (!amount || amount <= 0) return showAlert("Please enter valid amount");
+
+      // Check against dynamic config
+      if (amount < appConfig.minWithdrawal) {
+          return showAlert(`সর্বনিম্ন ${appConfig.minWithdrawal} কয়েন লাগবে।`);
+      }
+      
       if (amount > userData.balance) return showAlert("আপনার ব্যালেন্স কম।");
       if (!number) return showAlert("নম্বর লিখুন।");
 
@@ -823,7 +912,8 @@
           status: "pending",
           createdAt: serverTimestamp(),
           deviceId: deviceId,
-          ip: userIP
+          ip: userIP,
+          conversionRate: `${appConfig.coinValueCoins}=${appConfig.coinValueTaka}` // Save the rate used
         });
         const newBalance = userData.balance - amount;
         await updateDoc(doc(db, "users", currentUser.uid), { balance: newBalance });
@@ -831,9 +921,24 @@
         updateUI();
         showAlert("অনুরোধ পাঠানো হয়েছে!");
         loadWithdrawalHistory();
+        document.getElementById('withdraw-amount').value = '';
+        document.getElementById('payment-number').value = '';
+        document.getElementById('conversion-preview').textContent = '';
       } catch (e) { showAlert("Error!"); }
       showLoader(false);
     }
+
+    // Input Listener to show conversion preview in real-time
+    document.getElementById('withdraw-amount').addEventListener('input', (e) => {
+        const amount = parseInt(e.target.value) || 0;
+        const preview = document.getElementById('conversion-preview');
+        if(amount > 0 && appConfig.coinValueCoins > 0) {
+            const val = (amount / appConfig.coinValueCoins) * appConfig.coinValueTaka;
+            preview.textContent = `You receive: ${val.toFixed(2)} ৳`;
+        } else {
+            preview.textContent = '';
+        }
+    });
 
     async function loadWithdrawalHistory() {
       const list = document.getElementById('withdrawal-history-list');
@@ -865,7 +970,6 @@
       document.querySelectorAll('.nav-link').forEach(l => {
         l.onclick = (e) => { e.preventDefault(); navigateTo(l.dataset.page); };
       });
-      // Added click handler for notification bell
       document.getElementById('notification-bell').onclick = () => {
          navigateTo('notification-page');
       };
