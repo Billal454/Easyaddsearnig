@@ -15,27 +15,27 @@
     body { font-family: 'Inter', sans-serif; background-color: #121212; color: #ffffff; }
     /* Mobile-like container centered on desktop */
     .app-wrapper { max-width: 28rem; margin: 0 auto; min-height: 100vh; position: relative; background-color: #121212; border-left: 1px solid #333; border-right: 1px solid #333; }
-    
+     
     .card-bg { background-color: #1e1e1e; }
     .text-accent { color: #ff8c00; }
     .bg-accent { background-color: #ff8c00; }
     .border-accent { border-color: #ff8c00; }
-    
+     
     .btn { transition: all 0.2s ease-in-out; transform: scale(1); }
     .btn:active { transform: scale(0.95); }
     .btn-accent { background-color: #ff8c00; color: #121212; font-weight: bold; }
     .btn-accent:hover { background-color: #e67e00; }
-    
+     
     .input-field { background-color: #2c2c2c; border: 1px solid #444; color: white; }
-    
+     
     /* Page Visibility Logic */
     .main-page { display: none; }
     .main-page.active { display: flex; animation: fadeIn 0.5s ease-in-out; }
     .sub-page { display: none; }
     .sub-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-    
+     
     .bottom-nav a.active { color: #ff8c00; }
-    
+     
     .notification-dot {
       position: absolute; top: 0; right: 0; width: 10px; height: 10px;
       background-color: #ef4444; border-radius: 50%; border: 2px solid #121212; display: none;
@@ -99,7 +99,7 @@
             <input id="signup-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg input-field mb-4">
             <input id="signup-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg input-field mb-4">
             <input id="signup-referral" type="text" placeholder="Referral Code (Optional)" class="w-full p-3 rounded-lg input-field mb-4 border-dashed border-accent">
-            
+             
             <button id="signup-btn" class="w-full p-3 rounded-lg btn-accent mb-4">Sign Up</button>
             <p class="text-center text-gray-400">Already have an account?
               <a href="#" id="show-login" class="font-semibold text-accent">Login</a>
@@ -123,7 +123,7 @@
         </header>
 
         <main class="flex-grow overflow-y-auto pb-20">
-          
+           
           <div id="home-page" class="p-4 space-y-6 sub-page">
             <div class="card-bg p-4 rounded-lg flex items-center justify-between border-l-4 border-accent shadow-lg">
               <div>
@@ -186,7 +186,7 @@
                     </div>
                     <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost2.blogspot.com', 20)">Visit</button>
                   </div>
-      
+       
                   <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
                     <div class="flex items-center space-x-3">
                       <span class="text-3xl">🌐</span>
@@ -197,7 +197,7 @@
                     </div>
                     <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost3.blogspot.com', 20)">Visit</button>
                   </div>
-      
+       
                   <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
                     <div class="flex items-center space-x-3">
                       <span class="text-3xl">⌛</span>
@@ -241,12 +241,12 @@
             <div class="card-bg p-4 rounded-lg shadow-lg">
               <p class="text-sm text-gray-400 mb-1">Available Balance:</p>
               <p class="text-3xl font-bold text-accent mb-2"><span id="wallet-coin-balance">0</span> Coins</p>
-              
+               
               <div class="text-xs bg-gray-800 text-gray-300 p-2 rounded mb-4 flex items-center justify-center gap-2">
                  <i data-lucide="info" class="w-3 h-3 text-accent"></i>
                  <span id="rate-display">Loading Rate...</span>
               </div>
-              
+               
               <input id="withdraw-amount" type="number" placeholder="Enter coin amount" class="w-full p-3 rounded-lg input-field mb-2 focus:border-accent focus:outline-none transition">
               <p class="text-xs text-green-400 text-right mb-3 h-4" id="conversion-preview"></p>
 
@@ -257,7 +257,7 @@
               </select>
               <input id="payment-number" type="number" placeholder="Account Number" class="w-full p-3 rounded-lg input-field mb-3 focus:border-accent focus:outline-none transition">
               <button id="withdraw-btn" class="w-full p-3 rounded-lg btn-accent shadow-md">Request Withdrawal</button>
-              
+               
               <p class="text-xs text-gray-400 mt-4 text-center">
                 Minimum: <span id="dynamic-min-withdraw">5000</span> Coins | Payment within 12-24 Hours
               </p>
@@ -277,10 +277,26 @@
                 <span id="referral-code" class="text-2xl font-bold tracking-widest text-accent">LOADING...</span>
                 <button id="copy-code-btn" class="ml-4 p-2 hover:bg-gray-700 rounded-full transition"><i data-lucide="copy" class="w-5 h-5 text-gray-400"></i></button>
               </div>
-              
+               
               <button id="share-btn" class="w-full p-3 rounded-lg btn-accent shadow-md">Share With Friends</button>
               <p class="text-sm text-gray-400 mt-4">Earn <span class="text-accent font-bold">1000 Coins</span> for every friend who joins using your code!</p>
-            </div>
+              
+              <div class="mt-8 border-t border-gray-700 pt-6">
+                <h3 class="font-bold text-white mb-2 text-sm">Have a Referral Code?</h3>
+                <p class="text-xs text-gray-400 mb-3">If you missed entering a code during signup, you can add it here. (Optional)</p>
+                <div class="flex space-x-2">
+                    <input id="manual-refer-code" type="text" placeholder="Enter Referral ID" class="flex-grow p-3 rounded-lg input-field text-center uppercase tracking-wider focus:border-accent focus:outline-none">
+                    <button id="submit-refer-btn" class="p-3 rounded-lg bg-gray-700 hover:bg-gray-600 border border-gray-600 hover:border-accent text-white font-bold transition">Submit</button>
+                </div>
+              </div>
+
+              <div class="mt-6 border-t border-gray-700 pt-6">
+                 <h3 class="font-bold text-white mb-3 text-sm">My Referrals</h3>
+                 <div id="referral-list" class="space-y-2 text-center text-gray-400 text-xs">
+                    Loading...
+                 </div>
+              </div>
+              </div>
           </div>
 
           <div id="profile-page" class="p-4 space-y-6 sub-page text-center">
@@ -291,14 +307,14 @@
               <h2 id="profile-name" class="text-2xl font-bold">Loading...</h2>
               <p id="profile-email" class="text-gray-400 text-sm">...</p>
             </div>
-            
+             
             <div class="card-bg p-4 rounded-lg text-left">
               <h3 class="font-semibold mb-3 border-b border-gray-700 pb-2">Device Security</h3>
               <p class="text-sm text-gray-400 mb-1">Current Device/IP:</p>
               <p id="current-device-info" class="text-xs font-mono p-2 bg-gray-800 rounded text-green-400 break-all"></p>
               <p class="text-xs text-gray-500 mt-2 flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i> Protected: Single device policy active</p>
             </div>
-            
+             
             <button id="logout-btn" class="w-full mt-4 p-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold transition">Logout</button>
           </div>
         </main>
@@ -436,12 +452,12 @@
         currentUser = user;
         showLoader(true);
         if (!await checkActiveSession()) { showLoader(false); return; }
-        
+         
         await fetchUserData();
         await fetchAppConfig();
         listenForNotifications();
         await checkDeviceSecurity();
-        
+         
         updateUI();
         showMainPage('app-container');
         navigateTo('home-page');
@@ -471,7 +487,7 @@
                     const data = doc.data();
                     if(!latestId) { latestId = doc.id; latestDocData = data; }
                     let dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : "Just now";
-                    
+                     
                     const html = `
                     <div class="card-bg p-4 rounded-lg border-l-4 border-accent shadow-sm hover:bg-[#252525] transition-colors">
                         <div class="flex justify-between items-start mb-1">
@@ -570,6 +586,16 @@
         const percentage = Math.min((count / limit) * 100, 100);
         progressBar.style.width = `${percentage}%`;
       }
+
+      // Check if user already has a referrer to potentially hide/disable the input (Optional visual touch)
+      const manualInput = document.getElementById('manual-refer-code');
+      const manualBtn = document.getElementById('submit-refer-btn');
+      if(userData.referredBy) {
+         manualInput.value = "ALREADY REFERRED";
+         manualInput.disabled = true;
+         manualBtn.disabled = true;
+         manualBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
     }
 
     function navigateTo(pageId) {
@@ -581,6 +607,54 @@
       });
       if(pageId === 'wallet-page') loadWithdrawalHistory();
       if(pageId === 'notification-page') markNotificationsRead();
+      // NEW: Load referral list when opening refer page
+      if(pageId === 'refer-page') loadReferralList();
+    }
+
+    // NEW FUNCTION: Load Referral List
+    async function loadReferralList() {
+        const list = document.getElementById('referral-list');
+        list.innerHTML = '<div class="animate-pulse">Loading...</div>';
+
+        try {
+            // Query users who have your UID in their 'referredBy' field
+            // Note: We use a simple query to avoid needing a composite index. 
+            const q = query(collection(db, "users"), where("referredBy", "==", currentUser.uid), limit(20));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                list.innerHTML = '<p class="text-gray-500">No referrals yet.</p>';
+                return;
+            }
+
+            list.innerHTML = '';
+            snap.forEach(doc => {
+                const data = doc.data();
+                // Safe date formatting
+                const joinDate = data.registeredDevice && data.registeredDevice.registeredAt 
+                    ? new Date(data.registeredDevice.registeredAt.seconds * 1000).toLocaleDateString()
+                    : 'Unknown';
+
+                list.innerHTML += `
+                    <div class="bg-gray-800 p-3 rounded-lg flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-gray-700 p-2 rounded-full"><i data-lucide="user" class="w-4 h-4 text-gray-300"></i></div>
+                            <div class="text-left">
+                                <p class="text-sm font-bold text-white">${data.name}</p>
+                                <p class="text-[10px] text-gray-500">Joined: ${joinDate}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-green-400 font-bold flex items-center gap-1">
+                            <i data-lucide="check-circle" class="w-3 h-3"></i> Referred
+                        </span>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        } catch (e) {
+            console.error(e);
+            list.innerHTML = '<p class="text-red-400">Failed to load referrals.</p>';
+        }
     }
 
     function startTimerTask(seconds, reward) {
@@ -698,6 +772,47 @@
       showLoader(false);
     }
 
+    // Handle Manual Referral Submission
+    async function handleManualReferral() {
+        const code = document.getElementById('manual-refer-code').value.trim().toUpperCase();
+        if(!code) return showAlert("Please enter a code.");
+        if(userData.referredBy) return showAlert("You have already been referred by someone.");
+        if(code === userData.referralCode) return showAlert("You cannot refer yourself.");
+
+        showLoader(true);
+        try {
+            const q = query(collection(db, "users"), where("referralCode", "==", code));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                showAlert("Invalid Referral Code.");
+            } else {
+                const referrerDoc = querySnapshot.docs[0];
+                const referrerData = referrerDoc.data();
+                
+                // 1. Give bonus to referrer
+                await updateDoc(doc(db, "users", referrerData.uid), { 
+                    balance: (referrerData.balance || 0) + 1000 
+                });
+
+                // 2. Link current user to referrer
+                const userRef = doc(db, "users", currentUser.uid);
+                await updateDoc(userRef, { referredBy: referrerData.uid });
+                
+                // Update local state
+                userData.referredBy = referrerData.uid;
+                updateUI();
+                
+                showAlert(`Success! You have been referred by ${referrerData.name}.`);
+                document.getElementById('manual-refer-code').value = '';
+            }
+        } catch(e) {
+            console.error(e);
+            showAlert("Something went wrong. Try again.");
+        }
+        showLoader(false);
+    }
+
     // WITHDRAWAL LOGIC WITH DYNAMIC CONFIG
     async function handleWithdrawal() {
       if (userData.registeredDevice && userData.registeredDevice.deviceId !== deviceId) {
@@ -764,6 +879,8 @@
       document.getElementById('notification-bell').onclick = () => { navigateTo('notification-page'); };
       document.getElementById('show-signup').onclick = () => { document.getElementById('login-view').classList.add('hidden'); document.getElementById('signup-view').classList.remove('hidden'); };
       document.getElementById('show-login').onclick = () => { document.getElementById('signup-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); };
+      
+      document.getElementById('submit-refer-btn').onclick = handleManualReferral;
     }
 
     function showMainPage(id) {
