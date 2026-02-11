@@ -736,8 +736,6 @@
         if (timeSpentInSeconds >= activeTask.duration) {
           // SUCCESS: They waited long enough
           await addReward(50);
-          // Optional: You can customize the success message
-          // showAlert(`Task Complete! You waited ${Math.floor(timeSpentInSeconds)} seconds.`);
         } else {
           // FAILURE: They came back too early
           const remaining = Math.ceil(activeTask.duration - timeSpentInSeconds);
@@ -915,35 +913,32 @@
       });
     }
 
-    // --- NEW FUNCTION: SHARE REFERRAL ---
+    // --- NEW FUNCTION: SHORT SHARE REFERRAL (TELEGRAM BOT) ---
     async function handleShare() {
-        if (!userData || !userData.referralCode) {
-            return showAlert("Referral code loading...");
-        }
+      if (!userData || !userData.referralCode) return showAlert("Loading...");
 
-        const shareText = `Join Earningbot and earn real money! Use my code: ${userData.referralCode} to get 1000 coins bonus!`;
-        const shareUrl = window.location.href; 
+      // *** IMPORTANT: YOUR BOT USERNAME IS SET HERE ***
+      const botUsername = "easyaddsearnig_bot";
+      
+      // Line 1: The Link (Deep link with code)
+      const link = `https://t.me/${botUsername}?start=${userData.referralCode}`;
+      
+      // Line 2: The Code
+      const message = `${link}\nCode: ${userData.referralCode}`;
 
-        // Use Native Share API if available (Mobile)
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: 'Join Earningbot!',
-                    text: shareText,
-                    url: shareUrl
-                });
-            } catch (err) {
-                console.log('Share canceled or failed', err);
-            }
-        } else {
-            // Fallback for Desktop: Copy to Clipboard
-            try {
-                await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-                showAlert("Referral link copied to clipboard!");
-            } catch (err) {
-                showAlert("Failed to copy link.");
-            }
-        }
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Join Now',
+            text: message
+          });
+        } catch (e) { console.log(e); }
+      } else {
+        try {
+          await navigator.clipboard.writeText(message);
+          showAlert("Link copied to clipboard!");
+        } catch (e) { showAlert("Copy failed"); }
+      }
     }
 
     function setupEventListeners() {
@@ -958,7 +953,6 @@
       document.getElementById('show-login').onclick = () => { document.getElementById('signup-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); };
       
       document.getElementById('submit-refer-btn').onclick = handleManualReferral;
-      // ADDED THE LISTENER FOR THE SHARE BUTTON
       document.getElementById('share-btn').onclick = handleShare;
     }
 
