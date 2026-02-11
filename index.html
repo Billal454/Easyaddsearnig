@@ -915,6 +915,37 @@
       });
     }
 
+    // --- NEW FUNCTION: SHARE REFERRAL ---
+    async function handleShare() {
+        if (!userData || !userData.referralCode) {
+            return showAlert("Referral code loading...");
+        }
+
+        const shareText = `Join Earningbot and earn real money! Use my code: ${userData.referralCode} to get 1000 coins bonus!`;
+        const shareUrl = window.location.href; 
+
+        // Use Native Share API if available (Mobile)
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Join Earningbot!',
+                    text: shareText,
+                    url: shareUrl
+                });
+            } catch (err) {
+                console.log('Share canceled or failed', err);
+            }
+        } else {
+            // Fallback for Desktop: Copy to Clipboard
+            try {
+                await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+                showAlert("Referral link copied to clipboard!");
+            } catch (err) {
+                showAlert("Failed to copy link.");
+            }
+        }
+    }
+
     function setupEventListeners() {
       document.getElementById('signup-btn').onclick = handleSignup;
       document.getElementById('login-btn').onclick = handleLogin;
@@ -927,6 +958,8 @@
       document.getElementById('show-login').onclick = () => { document.getElementById('signup-view').classList.add('hidden'); document.getElementById('login-view').classList.remove('hidden'); };
       
       document.getElementById('submit-refer-btn').onclick = handleManualReferral;
+      // ADDED THE LISTENER FOR THE SHARE BUTTON
+      document.getElementById('share-btn').onclick = handleShare;
     }
 
     function showMainPage(id) {
@@ -942,4 +975,3 @@
   </script>
 </body>
 </html>
-
