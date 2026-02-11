@@ -141,7 +141,7 @@
                         <p class="text-xs text-gray-400">Status</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-2xl font-bold text-accent"><span id="task-progress">0</span>/<span id="task-limit">15</span></p>
+                        <p class="text-2xl font-bold text-accent"><span id="task-progress">0</span>/<span id="task-limit">25</span></p>
                         <p class="text-[10px] text-gray-500">Completed</p>
                     </div>
                 </div>
@@ -154,15 +154,16 @@
               </div>
 
               <div class="space-y-3">
+                
                 <div class="bg-orange-500 p-3 rounded-lg flex items-center justify-between text-black shadow-md transform active:scale-95 transition">
                   <div class="flex items-center space-x-3">
                     <span class="text-3xl">🤩</span>
                     <div>
                       <h3 class="font-bold">Watch Video Ad</h3>
-                      <p class="text-xs font-medium">Instant Reward</p>
+                      <p class="text-xs font-medium">Instant Reward (Limit 5)</p>
                     </div>
                   </div>
-                  <button class="bg-white text-orange-500 font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('interstitial')">Claim</button>
+                  <button class="bg-white text-orange-500 font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('interstitial', 'task_video')">Claim</button>
                 </div>
 
                 <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
@@ -170,10 +171,10 @@
                     <span class="text-3xl">🌐</span>
                     <div>
                       <h3 class="font-semibold">Website Visit 1</h3>
-                      <p class="text-xs text-gray-400">Wait 20 Seconds</p>
+                      <p class="text-xs text-gray-400">Wait 20 Seconds (Limit 5)</p>
                     </div>
                   </div>
-                  <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earnigblog1.blogspot.com', 20)">Visit</button>
+                  <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost01.blogspot.com', 20, 'task_visit1')">Visit</button>
                 </div>
 
                 <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
@@ -181,10 +182,10 @@
                       <span class="text-3xl">🌐</span>
                       <div>
                         <h3 class="font-semibold">Website Visit 2</h3>
-                        <p class="text-xs text-gray-400">Wait 20 Seconds</p>
+                        <p class="text-xs text-gray-400">Wait 20 Seconds (Limit 5)</p>
                       </div>
                     </div>
-                    <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost2.blogspot.com', 20)">Visit</button>
+                    <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost2.blogspot.com', 20, 'task_visit2')">Visit</button>
                   </div>
         
                   <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
@@ -192,10 +193,10 @@
                       <span class="text-3xl">🌐</span>
                       <div>
                         <h3 class="font-semibold">Website Visit 3</h3>
-                        <p class="text-xs text-gray-400">Wait 20 Seconds</p>
+                        <p class="text-xs text-gray-400">Wait 20 Seconds (Limit 5)</p>
                       </div>
                     </div>
-                    <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningblog3.blogspot.com', 20)">Visit</button>
+                    <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://earningpost3.blogspot.com', 20, 'task_visit3')">Visit</button>
                   </div>
         
                   <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
@@ -203,10 +204,10 @@
                       <span class="text-3xl">⌛</span>
                       <div>
                         <h3 class="font-semibold">Special Task Click</h3>
-                        <p class="text-xs text-gray-400">Wait 30 Seconds</p>
+                        <p class="text-xs text-gray-400">Wait 30 Seconds (Limit 5)</p>
                       </div>
                     </div>
-                    <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://otieu.com/4/10511822', 30)">Start</button>
+                    <button class="bg-white text-black font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://otieu.com/4/10511822', 30, 'task_special')">Start</button>
                   </div>
 
                 <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
@@ -217,7 +218,7 @@
                       <p class="text-xs text-gray-400">Big Reward!</p>
                     </div>
                   </div>
-                  <button class="bg-green-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('miniApp')">Play</button>
+                  <button class="bg-green-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="claimReward('miniApp', 'task_game')">Play</button>
                 </div>
               </div>
             </section>
@@ -360,12 +361,12 @@
 
     let currentUser = null;
     let userData = null;
-    let activeTask = null; // --- NEW VARIABLE FOR ANTI-CHEAT ---
+    let activeTask = null; // Stores data about the current running task
 
-    // CONFIG: Defaults
+    // CONFIG: Updated for 25 total
     let appConfig = { 
         minWithdrawal: 5000, 
-        dailyAdLimit: 15,
+        dailyAdLimit: 25,
         coinValueCoins: 1000,
         coinValueTaka: 10,
         paymentMethods: ['Bkash', 'Nagad', 'Rocket']
@@ -531,11 +532,16 @@
     async function fetchUserData() {
       const userRef = doc(db, "users", currentUser.uid);
       const snap = await getDoc(userRef);
-      if (snap.exists()) { userData = snap.data(); } 
+      if (snap.exists()) { 
+          userData = snap.data();
+          // Ensure taskCounts exists
+          if(!userData.taskCounts) userData.taskCounts = {};
+      } 
       else {
         const referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
         userData = {
           uid: currentUser.uid, name: currentUser.displayName || "User", email: currentUser.email, balance: 50, referralCode: referralCode, dailyAdCount: 0, lastAdWatchDate: new Date().toISOString().split('T')[0],
+          taskCounts: {}, // Initialize empty map for specific tasks
           registeredDevice: { deviceId: deviceId, ip: userIP, registeredAt: serverTimestamp() }
         };
         await setDoc(userRef, userData);
@@ -548,7 +554,7 @@
       if (snap.exists()) {
           appConfig = snap.data();
           if(!appConfig.minWithdrawal) appConfig.minWithdrawal = 5000;
-          if(!appConfig.dailyAdLimit) appConfig.dailyAdLimit = 15;
+          if(!appConfig.dailyAdLimit) appConfig.dailyAdLimit = 25; // Updated Default
           if(!appConfig.coinValueCoins) appConfig.coinValueCoins = 1000;
           if(!appConfig.coinValueTaka) appConfig.coinValueTaka = 10;
           if(!appConfig.paymentMethods) appConfig.paymentMethods = ['Bkash', 'Nagad', 'Rocket'];
@@ -577,7 +583,11 @@
       if (deviceInfo) deviceInfo.textContent = `${deviceId.substring(0, 12)}... | IP: ${userIP}`;
       
       const today = new Date().toISOString().split('T')[0];
-      const count = userData.lastAdWatchDate === today ? (userData.dailyAdCount || 0) : 0;
+      // Reset logic for display if date changed locally but not in DB yet
+      let count = 0;
+      if (userData.lastAdWatchDate === today) {
+          count = userData.dailyAdCount || 0;
+      }
       const limit = appConfig.dailyAdLimit;
       
       document.getElementById('task-progress').textContent = count;
@@ -669,35 +679,58 @@
         if (timeLeft <= 0) {
           clearInterval(interval);
           timerModal.classList.add('hidden');
-          await addReward(reward);
+          // Pass the taskId from the activeTask (set in claimReward)
+          await addReward(reward, activeTask ? activeTask.taskId : null);
         }
       }, 1000);
     }
 
-    async function validateTask() {
+    async function validateTask(taskId) {
       if (userData.registeredDevice && userData.registeredDevice.deviceId !== deviceId) {
         showAlert("Please use your registered device to complete tasks.");
         return false;
       }
+
       const today = new Date().toISOString().split('T')[0];
-      const currentCount = userData.lastAdWatchDate === today ? userData.dailyAdCount : 0;
-      if (currentCount >= appConfig.dailyAdLimit) {
-        showAlert("আজকের কাজের লিমিট শেষ!");
+      
+      // Reset counters if it's a new day (in memory check first)
+      if (userData.lastAdWatchDate !== today) {
+          userData.dailyAdCount = 0;
+          userData.taskCounts = {};
+      }
+
+      // 1. Check Total Daily Limit (25)
+      const currentTotal = userData.dailyAdCount || 0;
+      if (currentTotal >= appConfig.dailyAdLimit) {
+        showAlert(`Daily Total Limit (${appConfig.dailyAdLimit}) Reached! Come back tomorrow.`);
         return false;
       }
+
+      // 2. Check Specific Task Limit (5)
+      if (taskId) {
+          const taskCounts = userData.taskCounts || {};
+          const currentTaskCount = taskCounts[taskId] || 0;
+          if (currentTaskCount >= 5) {
+              showAlert("Daily limit (5) reached for this specific task!");
+              return false;
+          }
+      }
+
       return true;
     }
 
     // --- REPLACED FUNCTION (ANTI-CHEAT) ---
-    window.visitWebsite = async function(url, seconds) {
-      // 1. Run standard validation (device check, daily limit)
-      if (!await validateTask()) return;
+    // Added 'taskId' parameter
+    window.visitWebsite = async function(url, seconds, taskId) {
+      // 1. Run standard validation (device check, daily limit, specific limit)
+      if (!await validateTask(taskId)) return;
 
       // 2. Set the active task data
       activeTask = {
         url: url,
         duration: seconds,
-        startTime: Date.now() // Record the exact time they clicked
+        startTime: Date.now(), // Record the exact time they clicked
+        taskId: taskId // Store ID for tracking
       };
 
       // 3. Open the website in a new tab
@@ -735,7 +768,7 @@
         // CHECK: Did they stay long enough?
         if (timeSpentInSeconds >= activeTask.duration) {
           // SUCCESS: They waited long enough
-          await addReward(50);
+          await addReward(50, activeTask.taskId);
         } else {
           // FAILURE: They came back too early
           const remaining = Math.ceil(activeTask.duration - timeSpentInSeconds);
@@ -747,32 +780,64 @@
       }
     });
 
-    async function addReward(reward) {
+    // Updated addReward to handle Specific Task Tracking
+    async function addReward(reward, taskId) {
       if (currentUser) {
         try { await updateDoc(doc(db, "active_sessions", currentUser.uid), { lastActive: serverTimestamp() }); } catch (e) {}
       }
+      
       const today = new Date().toISOString().split('T')[0];
       const userRef = doc(db, "users", currentUser.uid);
-      let newCount = 1;
-      if(userData.lastAdWatchDate === today) newCount = (userData.dailyAdCount || 0) + 1;
+      
+      // Logic to reset counters if day changed
+      if (userData.lastAdWatchDate !== today) {
+          userData.dailyAdCount = 0;
+          userData.taskCounts = {};
+      }
+
+      // Increment Total
+      let newTotal = (userData.dailyAdCount || 0) + 1;
+      
+      // Increment Specific Task
+      let currentTaskCounts = userData.taskCounts || {};
+      if(taskId) {
+          currentTaskCounts[taskId] = (currentTaskCounts[taskId] || 0) + 1;
+      }
 
       const newBalance = (userData.balance || 0) + reward;
-      await updateDoc(userRef, { balance: newBalance, dailyAdCount: newCount, lastAdWatchDate: today });
+
+      // Save to DB
+      await updateDoc(userRef, { 
+          balance: newBalance, 
+          dailyAdCount: newTotal,
+          taskCounts: currentTaskCounts, 
+          lastAdWatchDate: today 
+      });
+      
+      // Update Local State
       userData.balance = newBalance;
-      userData.dailyAdCount = newCount;
+      userData.dailyAdCount = newTotal;
+      userData.taskCounts = currentTaskCounts;
       userData.lastAdWatchDate = today;
+      
       updateUI();
       showAlert(`অভিনন্দন! আপনি ${reward} কয়েন পেয়েছেন।`);
     }
 
-    window.claimReward = async (type) => {
-      if (!await validateTask()) return;
+    // Updated claimReward to accept taskId
+    window.claimReward = async (type, taskId) => {
+      if (!await validateTask(taskId)) return;
+      
+      // Set active task for internal timer logic (like dailyClick)
+      activeTask = { taskId: taskId }; 
+
       if (type === 'dailyClick') return startTimerTask(30, 50);
+      
       if (typeof window.show_10514704 === 'function') {
         showLoader(true);
         try {
           await window.show_10514704();
-          await addReward(type === 'miniApp' ? 100 : 50);
+          await addReward(type === 'miniApp' ? 100 : 50, taskId);
         } catch (e) { showAlert("অ্যাড লোড করতে সমস্যা হয়েছে।"); } finally { showLoader(false); }
       }
     };
@@ -801,6 +866,7 @@
         await setDoc(doc(db, "users", res.user.uid), {
           uid: res.user.uid, name: name, email: email, balance: 50, referralCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
           referredBy: referredByUid, dailyAdCount: 0, lastAdWatchDate: new Date().toISOString().split('T')[0],
+          taskCounts: {},
           registeredDevice: { deviceId: deviceId, ip: userIP, registeredAt: serverTimestamp() }
         });
       } catch (e) { showAlert(e.code === 'auth/email-already-in-use' ? "এই ইমেইল ইতিমধ্যে ব্যবহার করা হয়েছে।" : "অ্যাকাউন্ট তৈরি করা যাচ্ছে না।"); }
