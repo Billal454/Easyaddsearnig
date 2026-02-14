@@ -54,24 +54,27 @@
 <body class="bg-[#0a0a0a]"> <div class="app-wrapper flex flex-col shadow-2xl">
       
       <div id="notification-popup-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[90] p-6 backdrop-blur-sm">
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center border-t-4 border-accent shadow-2xl relative popup-animation">
+        <div id="popup-card" class="bg-gray-800 rounded-xl p-6 w-full max-w-sm text-center border-t-4 border-accent shadow-2xl relative popup-animation">
             
             <button onclick="closeNotificationPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-white transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4 text-black shadow-lg shadow-orange-500/20">
-                <i data-lucide="bell-ring" class="w-8 h-8"></i>
+            <div id="popup-icon-container" class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4 text-black shadow-lg shadow-orange-500/20">
+                <i id="popup-icon" data-lucide="bell-ring" class="w-8 h-8"></i>
             </div>
 
             <h3 id="popup-title" class="text-xl font-bold text-white mb-2">New Message</h3>
-            <p id="popup-message" class="text-gray-300 text-sm mb-4 leading-relaxed">You have a new notification.</p>
+            
+            <div class="bg-[#121212] p-3 rounded-lg mb-4 text-left border border-gray-700">
+                <p id="popup-message" class="text-gray-300 text-sm leading-relaxed">...</p>
+            </div>
+
             <p id="popup-date" class="text-[10px] text-gray-500 mb-6 font-mono">Just Now</p>
 
-            <button onclick="closeNotificationPopup()" class="w-full btn-accent py-3 rounded-lg font-bold shadow-lg">Okay, Got it</button>
+            <button onclick="closeNotificationPopup()" id="popup-btn" class="w-full btn-accent py-3 rounded-lg font-bold shadow-lg">Okay, Got it</button>
         </div>
       </div>
-
       <div id="loader" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[70]">
         <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-accent"></div>
       </div>
@@ -495,14 +498,51 @@
         popupModal.classList.add('hidden');
     };
 
-    function showNotificationPopup(title, message, dateStr) {
+    // Updated showNotificationPopup with visual distinction
+    function showNotificationPopup(title, message, dateStr, isPrivate = false) {
         document.getElementById('popup-title').textContent = title || "New Notification";
         document.getElementById('popup-message').textContent = message || "";
         document.getElementById('popup-date').textContent = dateStr || "Just Now";
+        
+        // Visual Changes for Private Message
+        const card = document.getElementById('popup-card');
+        const iconContainer = document.getElementById('popup-icon-container');
+        const btn = document.getElementById('popup-btn');
+        const icon = document.getElementById('popup-icon');
+
+        if(isPrivate) {
+            // Green styling for private
+            card.classList.remove('border-accent');
+            card.classList.add('border-green-500');
+            
+            iconContainer.classList.remove('bg-accent', 'shadow-orange-500/20');
+            iconContainer.classList.add('bg-green-500', 'shadow-green-500/20');
+            
+            btn.classList.remove('btn-accent');
+            btn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white');
+            
+            // Optional: Change Icon for private
+            icon.setAttribute('data-lucide', 'lock');
+        } else {
+            // Revert to Orange (Accent) for global
+            card.classList.add('border-accent');
+            card.classList.remove('border-green-500');
+            
+            iconContainer.classList.add('bg-accent', 'shadow-orange-500/20');
+            iconContainer.classList.remove('bg-green-500', 'shadow-green-500/20');
+            
+            btn.classList.add('btn-accent');
+            btn.classList.remove('bg-green-600', 'hover:bg-green-700', 'text-white');
+            
+            icon.setAttribute('data-lucide', 'bell-ring');
+        }
+        lucide.createIcons();
         popupModal.classList.remove('hidden');
     }
 
+    // --- MAIN NOTIFICATION LISTENER ---
     function listenForNotifications() {
+        // 1. Listen for GLOBAL Notifications
         const globalRef = collection(db, "global_notifications");
         const qGlobal = query(globalRef, orderBy("createdAt", "desc"), limit(20));
         
@@ -511,72 +551,96 @@
         onSnapshot(qGlobal, (snapshot) => {
             const listContainer = document.getElementById("notification-list");
             const dot = document.getElementById("notification-dot");
-            listContainer.innerHTML = "";
-            let latestId = null;
-
-            if (snapshot.empty) {
-                listContainer.innerHTML = `<div class="flex flex-col items-center justify-center mt-20 text-gray-500"><i data-lucide="inbox" class="w-12 h-12 mb-2 opacity-50"></i><p class="text-sm">No new notifications</p></div>`;
-            } else {
+            
+            // Only clear if empty state present
+            if (snapshot.empty && listContainer.innerHTML.includes("No new notifications")) {
+               // keep empty state
+            } else if (!snapshot.empty) {
+                if(listContainer.innerHTML.includes("No new notifications")) listContainer.innerHTML = "";
+                
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    if(!latestId) latestId = doc.id;
                     let dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : "Just now";
                     
                     const html = `
-                    <div class="card-bg p-4 rounded-lg border-l-4 border-accent shadow-sm hover:bg-[#252525] transition-colors">
+                    <div class="card-bg p-4 rounded-lg border-l-4 border-accent shadow-sm hover:bg-[#252525] transition-colors mb-3">
                         <div class="flex justify-between items-start mb-1">
                             <h3 class="font-bold text-white text-sm">${data.title || "New Message"}</h3>
                             <span class="text-[10px] text-gray-500 bg-black bg-opacity-30 px-2 py-1 rounded-full">${dateStr}</span>
                         </div>
                         <p class="text-xs text-gray-300 leading-relaxed">${data.message}</p>
                     </div>`;
-                    listContainer.innerHTML += html;
+                    
+                    // Avoid duplicating
+                    if(!listContainer.innerHTML.includes(data.message)) {
+                        listContainer.innerHTML += html;
+                    }
                 });
                 lucide.createIcons();
-
-                const lastSeenId = localStorage.getItem(`lastSeenNotification_${currentUser.uid}`);
-                if (latestId && latestId !== lastSeenId) {
-                    dot.style.display = "block";
-                }
                 
+                // POPUP LOGIC FOR GLOBAL
                 const changes = snapshot.docChanges();
                 changes.forEach(change => {
                     if (change.type === 'added' && !isInitialLoad) {
                         const data = change.doc.data();
-                        showNotificationPopup(data.title, data.message, "Just Now");
+                        showNotificationPopup(data.title, data.message, "Just Now", false); // isPrivate = false
+                        dot.style.display = "block";
                     }
                 });
             }
             isInitialLoad = false;
         });
 
+        // 2. Listen for PERSONAL Notifications (PRIVATE MESSAGES)
         if(currentUser && currentUser.uid) {
+            // Listen specifically to users/{uid}/notifications
             const personalRef = collection(db, "users", currentUser.uid, "notifications");
             const qPersonal = query(personalRef, orderBy("createdAt", "desc"), limit(10));
             let isInitialPersonal = true;
 
             onSnapshot(qPersonal, (snapshot) => {
                 if(!snapshot.empty) {
+                    const listContainer = document.getElementById("notification-list");
+                    const dot = document.getElementById("notification-dot");
+                    
+                    if(listContainer.innerHTML.includes("No new notifications")) listContainer.innerHTML = "";
+
                     const changes = snapshot.docChanges();
                     changes.forEach(change => {
-                        if (change.type === 'added' && !isInitialPersonal) {
+                        if (change.type === 'added') {
                             const data = change.doc.data();
-                            showNotificationPopup(data.title, data.message, "Just Now");
-                            document.getElementById("notification-dot").style.display = "block";
+                            
+                            // Trigger Popup ONLY for new messages arriving now (not on first load)
+                            if(!isInitialPersonal) {
+                                // Show the "Court" (Popup) for Private Message -> TRUE for isPrivate
+                                showNotificationPopup(data.title, data.message, "Just Now", true);
+                                dot.style.display = "block";
+                            }
+
+                            // Add to List (Prepend to show at top with Green Border)
+                            const html = `
+                            <div class="card-bg p-4 rounded-lg border-l-4 border-green-500 shadow-sm hover:bg-[#252525] transition-colors mb-3">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h3 class="font-bold text-white text-sm">${data.title || "Personal Message"}</h3>
+                                    <span class="text-[10px] text-green-400 bg-green-900 bg-opacity-30 px-2 py-1 rounded-full border border-green-700">Private</span>
+                                </div>
+                                <p class="text-xs text-gray-300 leading-relaxed">${data.message}</p>
+                            </div>`;
+                            
+                            // Insert at the beginning of the list
+                            listContainer.insertAdjacentHTML('afterbegin', html);
                         }
                     });
+                    lucide.createIcons();
                 }
                 isInitialPersonal = false;
             });
         }
     }
+    // --- END LISTENER ---
 
     function markNotificationsRead() {
         document.getElementById("notification-dot").style.display = "none";
-        const q = query(collection(db, "global_notifications"), orderBy("createdAt", "desc"), limit(1));
-        getDocs(q).then(snap => {
-            if(!snap.empty) localStorage.setItem(`lastSeenNotification_${currentUser.uid}`, snap.docs[0].id);
-        });
     }
 
     async function fetchUserData() {
