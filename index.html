@@ -1133,7 +1133,7 @@
         withdrawalListener();
       }
 
-      const q = query(collection(db, "withdrawals"), where("userId", "==", currentUser.uid), orderBy("createdAt", "desc"), limit(10));
+      const q = query(collection(db, "withdrawals"), where("userId", "==", currentUser.uid), orderBy("createdAt", "desc"), limit(20));
       
       withdrawalListener = onSnapshot(q, (snap) => {
         list.innerHTML = "";
@@ -1153,6 +1153,7 @@
                });
             }
             
+            // Status Logic: Pending (Yellow), Approved (Green), Rejected (Red)
             const statusColor = data.status === 'approved' ? 'border-green-500' : 
                                (data.status === 'rejected' ? 'border-red-500' : 'border-yellow-500');
             const statusText = data.status === 'approved' ? 'Approved' : 
