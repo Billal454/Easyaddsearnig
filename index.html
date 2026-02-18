@@ -257,7 +257,7 @@
                         <p class="text-xs text-gray-400">Wait 30 Seconds (Limit 5)</p>
                       </div>
                     </div>
-                    <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('earningpost4.blogspot.com', 30, 'task_special')">Visit</button>
+                    <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://otieu.com/4/10511822', 30, 'task_special')">Visit</button>
                   </div>
 
                 <div class="card-bg p-3 rounded-lg flex items-center justify-between transform active:scale-95 transition">
@@ -268,7 +268,7 @@
                       <p class="text-xs text-gray-400">Wait 30 Seconds (Limit 5)</p>
                     </div>
                   </div>
-                  <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://otieu.com/4/10511822', 30, 'task_game')">Visit</button>
+                  <button class="bg-blue-600 text-white font-bold px-6 py-2 rounded-lg text-sm btn" onclick="visitWebsite('https://www.google.com', 30, 'task_game')">Visit</button>
                 </div>
 
               </div>
@@ -425,6 +425,7 @@
     };
     let userIP = null;
     let deviceId = null;
+    let withdrawalListener = null; // Store listener to unsubscribe
 
     const loader = document.getElementById('loader');
     const timerModal = document.getElementById('timer-modal');
@@ -1104,7 +1105,7 @@
         userData.balance = newBalance;
         updateUI();
         showAlert("অনুরোধ পাঠানো হয়েছে!");
-        loadWithdrawalHistory();
+        // History will update automatically via listener
         document.getElementById('withdraw-amount').value = '';
         document.getElementById('payment-number').value = '';
         document.getElementById('conversion-preview').textContent = '';
@@ -1123,41 +1124,55 @@
         }
     });
 
-    async function loadWithdrawalHistory() {
+    // --- REAL-TIME WITHDRAWAL HISTORY (UPDATED) ---
+    function loadWithdrawalHistory() {
       const list = document.getElementById('withdrawal-history-list');
-      list.innerHTML = "";
-      const q = query(collection(db, "withdrawals"), where("userId", "==", currentUser.uid), orderBy("createdAt", "desc"), limit(5));
-      const snap = await getDocs(q);
       
-      snap.forEach(d => {
-        const data = d.data();
-        
-        let dateStr = 'Date Pending';
-        if(data.createdAt) {
-           dateStr = new Date(data.createdAt.seconds * 1000).toLocaleString('en-US', {
-              month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-           });
-        }
-        
-        const statusColor = data.status === 'approved' ? 'border-green-500' : 
-                            (data.status === 'rejected' ? 'border-red-500' : 'border-yellow-500');
-        const statusText = data.status === 'approved' ? 'Approved' : 
-                          (data.status === 'rejected' ? 'Rejected' : 'Pending');
-        const statusTextColor = data.status === 'approved' ? 'text-green-500' : 
-                               (data.status === 'rejected' ? 'text-red-500' : 'text-yellow-500');
+      // Stop previous listener if exists
+      if (withdrawalListener) {
+        withdrawalListener();
+      }
 
-        const html = `
-          <div class="card-bg p-3 rounded-lg flex flex-col gap-1 shadow-sm border-l-4 ${statusColor}">
-            <div class="flex justify-between items-center">
-               <span class="font-bold text-sm text-white">${data.amount} Coins</span>
-               <span class="text-xs font-bold ${statusTextColor}">${statusText}</span>
-            </div>
-            <div class="flex justify-between items-center text-xs text-gray-400">
-               <span>${data.method} - ${data.number}</span>
-               <span>${dateStr}</span>
-            </div>
-          </div>`;
-        list.innerHTML += html;
+      const q = query(collection(db, "withdrawals"), where("userId", "==", currentUser.uid), orderBy("createdAt", "desc"), limit(10));
+      
+      withdrawalListener = onSnapshot(q, (snap) => {
+        list.innerHTML = "";
+        
+        if (snap.empty) {
+            list.innerHTML = '<p class="text-center text-gray-500 text-xs py-4">No history found.</p>';
+            return;
+        }
+
+        snap.forEach(d => {
+            const data = d.data();
+            
+            let dateStr = 'Date Pending';
+            if(data.createdAt) {
+               dateStr = new Date(data.createdAt.seconds * 1000).toLocaleString('en-US', {
+                  month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+               });
+            }
+            
+            const statusColor = data.status === 'approved' ? 'border-green-500' : 
+                               (data.status === 'rejected' ? 'border-red-500' : 'border-yellow-500');
+            const statusText = data.status === 'approved' ? 'Approved' : 
+                              (data.status === 'rejected' ? 'Rejected' : 'Pending');
+            const statusTextColor = data.status === 'approved' ? 'text-green-500' : 
+                                   (data.status === 'rejected' ? 'text-red-500' : 'text-yellow-500');
+
+            const html = `
+              <div class="card-bg p-3 rounded-lg flex flex-col gap-1 shadow-sm border-l-4 ${statusColor}">
+                <div class="flex justify-between items-center">
+                   <span class="font-bold text-sm text-white">${data.amount} Coins</span>
+                   <span class="text-xs font-bold ${statusTextColor}">${statusText}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs text-gray-400">
+                   <span>${data.method} - ${data.number}</span>
+                   <span>${dateStr}</span>
+                </div>
+              </div>`;
+            list.innerHTML += html;
+        });
       });
     }
 
@@ -1233,4 +1248,3 @@
   </script>
 </body>
 </html>
-
